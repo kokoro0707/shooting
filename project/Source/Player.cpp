@@ -32,10 +32,11 @@ void Player::Move()
 	{
 		y += speed;
 	}
-	if (x < 20)x = 20;
-	if (x < 1260)x = 1260;
-	if (x < 20)x = 20;
-	if (x < 700)x = 700;
+	if (x < 15)x = 15;
+	if (x > 1280-15)x = 1280-15;
+
+	if (y < 15)x = 15;
+	if (y > 720-15)x = 720-15;
 }
 
 void Player::Shoot(Bullet& bullet)

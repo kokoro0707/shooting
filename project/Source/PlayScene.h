@@ -1,5 +1,9 @@
 #pragma once
 #include "../Library/SceneBase.h"
+#include "../Source/Player.h"
+#include"../Source/Bullet.h"
+#include "../Source/Enemy.h"
+#include "../Source/EnergySystem.h"
 
 class PlayScene : public SceneBase
 {
@@ -14,26 +18,18 @@ public:
 	void Update() override;
 	void Draw() override;
 
+private:
+	void CheckCollision();
+
 
 
 private:
-
-	int playerX;
-	int playerY;
-	int playerSpeed;
-
-	int bulletX;
-	int bulletY;
-	bool bulletActive;
-
-	int enemyX;
-	int enemyY;
-	bool enemyActive;
+	Player player;
+	Bullet bullet;
+	Enemy enemy;
+	EnergySystem energysystem;
 
 	int score;
-	int timer;
-	int durability;
-
 };
 
 

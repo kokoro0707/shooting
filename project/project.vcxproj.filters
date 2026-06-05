@@ -52,6 +52,8 @@
     </ClCompile>
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\Bullet.cpp" />
+    <ClCompile Include="Source\Enemy.cpp" />
+    <ClCompile Include="Source\EnergySystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -118,6 +120,8 @@
     </ClInclude>
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\Bullet.h" />
+    <ClInclude Include="Source\Enemy.h" />
+    <ClInclude Include="Source\EnergySystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library">
