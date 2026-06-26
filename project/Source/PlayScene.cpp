@@ -58,12 +58,20 @@ void PlayScene::CheckCollision()
 	int dx = enemy.GetX() - bullet.GetX();
 	int dy = enemy.GetY() - bullet.GetY();
 
-	if (dx * dx * dy * dy < 30 * 30)
+	int distance = dx * dx + dy * dy;
+
+	if (distance < 25 * 25)
 	{
-		enemy.Dectivate();
 		bullet.Deactivate();
 
-		//“GŒ‚”j‚Å‘Ï‹v‰ñ•œ
+		enemy.Damage(1);
+	}
+
+	if (enemy.IsDead())
+	{
+		score += 100;
 		energysystem.Recover(5);
+
+		enemy.Respawn();
 	}
 }

@@ -4,6 +4,8 @@
 void Enemy::Initialize()
 {
 	speed = 3;
+	hp = 1;
+	graphHandle = LoadGraph("data/image/redEnemy1.png");
 	Respawn();
 }
 
@@ -34,7 +36,7 @@ void Enemy::Update()
 void Enemy::Draw()
 {
 	if (!isActive) return;
-	DrawCircle(x, y, 20, GetColor(255, 80, 80), TRUE);
+	DrawGraph(x - 16, y - 16, graphHandle, TRUE);
 
 }
 
@@ -43,10 +45,20 @@ void Enemy::Draw()
 void Enemy::Respawn()
 {
 	x = GetRand(1200) + 40;
+	y = -50;
 
-	// 確認用。あとで -40 に戻してOK
-	y = 100;
+	hp = -1;
 	isActive = true;
+}
+
+void Enemy::Damage(int value)
+{
+	hp -= value;
+
+	if (hp <= 0)
+	{
+		isActive = false;
+	}
 }
 
 

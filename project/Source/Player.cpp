@@ -1,12 +1,16 @@
 #include "Player.h"
 #include "Bullet.h"
 #include "DxLib.h"
+#include "Screen.h"
 
 void Player::Initialize()
 {
+
 	x = 640;
 	y = 600;
 	speed = 6;
+
+	graphHandle = LoadGraph("data/image/player2.png");
 }
 
 void Player::Update(Bullet& bullet)
@@ -48,5 +52,5 @@ void Player::Shoot(Bullet& bullet)
 }
 void Player::Draw()
 {
-	DrawBox(x - 15, y - 15, x + 15, y + 15, GetColor(0, 200, 255), TRUE);
+	DrawGraph(x - 16, y - 16, graphHandle, TRUE);
  }

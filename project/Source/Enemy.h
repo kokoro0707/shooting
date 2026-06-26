@@ -14,10 +14,21 @@ public:
 	int GetX() const { return x; }
 	int GetY() const { return y; }
 
+public:
+	void Damage(int value);
+
+	bool IsDead() const
+	{
+		return hp <= 0;
+	}
+
 private:
 	int x;
 	int y;
 	int speed;
 	bool isActive;
-};
+	int hp;
 
+	int graphHandle;
+
+};

@@ -19,4 +19,6 @@ private:
 	int x;
 	int y;
 	int speed;
+
+	int graphHandle;
 };
