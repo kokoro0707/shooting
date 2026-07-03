@@ -3,7 +3,7 @@ class Enemy
 {
 public:
 	void Initialize();
-	void Update();
+	void Update(int playerX,int playerY);
 	void Draw();
 
 	void Respawn();
@@ -30,5 +30,8 @@ private:
 	int hp;
 
 	int graphHandle;
+
+	int targetY;
+	int moveDirection;
 
 };

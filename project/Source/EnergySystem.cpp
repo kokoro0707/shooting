@@ -54,3 +54,13 @@ bool EnergySystem::UseEnergy(int value)
 	energy -= value;
 	return true;
 }
+
+void EnergySystem::Damage(int value)
+{
+	energy -= value;
+
+	if (energy < 0)
+	{
+		energy = 0;
+	}
+}

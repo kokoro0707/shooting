@@ -4,6 +4,7 @@
 #include"../Source/Bullet.h"
 #include "../Source/Enemy.h"
 #include "../Source/EnergySystem.h"
+#include "../Source/EnemyBullet.h"
 
 class PlayScene : public SceneBase
 {
@@ -30,6 +31,15 @@ private:
 	EnergySystem energysystem;
 
 	int score;
+
+private:
+	void UseSpecialAttack();
+
+	int specialEfectTimer;
+	bool oldZKey;
+
+	EnemyBullet enemyBullet;
+	int enemyShotTimer;
 };
 
 

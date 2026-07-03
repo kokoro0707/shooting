@@ -17,5 +17,8 @@ private:
 	int energy;
 	int maxEnergy;
 	int decreaseTimer;
+
+public:
+	void Damage(int value);
 };
 

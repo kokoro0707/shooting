@@ -54,6 +54,7 @@
     <ClCompile Include="Source\Bullet.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\EnergySystem.cpp" />
+    <ClCompile Include="Source\EnemyBullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -122,6 +123,7 @@
     <ClInclude Include="Source\Bullet.h" />
     <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\EnergySystem.h" />
+    <ClInclude Include="Source\EnemyBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library">
