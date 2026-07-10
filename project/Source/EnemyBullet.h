@@ -1,26 +1,48 @@
 #pragma once
+
 class EnemyBullet
 {
 public:
-	void Initialize();
-	void Update();
-	void Draw();
+    void Initialize(int handle);
+    void Update();
+    void Draw();
 
-	void Fire(int startX, int startY, int targetX, int targetY);
-	bool IsActive()const { return isActive; }
-	void Deactivate() { isActive = false; }
+    void Fire(
+        int startX,
+        int startY,
+        int targetX,
+        int targetY
+    );
 
-	int GetX() const { return x; }
-	int GetY() const { return y; }
+    bool IsActive() const
+    {
+        return isActive;
+    }
+
+    void Deactivate()
+    {
+        isActive = false;
+    }
+
+    int GetX() const
+    {
+        return static_cast<int>(x);
+    }
+
+    int GetY() const
+    {
+        return static_cast<int>(y);
+    }
 
 private:
-	float x;
-	float y;
-	float vx;
-	float vy;
-	float speed;
+    float x;
+    float y;
 
-	bool isActive;
+    float velocityX;
+    float velocityY;
 
+    float speed;
+    bool isActive;
+
+    int graphHandle;
 };
-

@@ -2,7 +2,7 @@
 class Bullet
 {
 public:
-	void Initialize();
+	void Initialize(int handle);
 	void Update();
 	void Draw();
 
@@ -19,5 +19,6 @@ private:
 	int y;
 	int speed;
 	int isActive;
+	int graphHandle;
 };
 

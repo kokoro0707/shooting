@@ -1,25 +1,35 @@
 #include "EnemyBullet.h"
 #include "DxLib.h"
-#include <math.h>
+#include <cmath>
 
-void EnemyBullet::Initialize()
+void EnemyBullet::Initialize(int handle)
 {
-    x = 0;
-    y = 0;
-    vx = 0;
-    vy = 0;
+    x = 0.0f;
+    y = 0.0f;
+
+    velocityX = 0.0f;
+    velocityY = 0.0f;
+
     speed = 5.0f;
     isActive = false;
+
+    graphHandle = handle;
 }
 
 void EnemyBullet::Update()
 {
-    if (!isActive) return;
+    if (!isActive)
+    {
+        return;
+    }
 
-    x += vx;
-    y += vy;
+    x += velocityX;
+    y += velocityY;
 
-    if (x < -50 || x > 1330 || y < -50 || y > 770)
+    if (x < -50.0f ||
+        x > 1330.0f ||
+        y < -50.0f ||
+        y > 770.0f)
     {
         isActive = false;
     }
@@ -27,30 +37,52 @@ void EnemyBullet::Update()
 
 void EnemyBullet::Draw()
 {
-    if (!isActive) return;
+    if (!isActive)
+    {
+        return;
+    }
 
-    DrawCircle((int)x, (int)y, 6, GetColor(255, 80, 80), TRUE);
+    DrawRotaGraph(
+        static_cast<int>(x),
+        static_cast<int>(y),
+        0.35,
+        0.0,
+        graphHandle,
+        TRUE
+    );
 }
 
-void EnemyBullet::Fire(int startX, int startY, int targetX, int targetY)
+void EnemyBullet::Fire(
+    int startX,
+    int startY,
+    int targetX,
+    int targetY)
 {
-    if (isActive) return;
+    if (isActive)
+    {
+        return;
+    }
 
-    x = (float)startX;
-    y = (float)startY;
+    x = static_cast<float>(startX);
+    y = static_cast<float>(startY);
 
-    float dx = (float)(targetX - startX);
-    float dy = (float)(targetY - startY);
+    const float dx =
+        static_cast<float>(targetX - startX);
 
-    float length = sqrtf(dx * dx + dy * dy);
+    const float dy =
+        static_cast<float>(targetY - startY);
+
+    float length = std::sqrt(
+        dx * dx + dy * dy
+    );
 
     if (length <= 0.0f)
     {
         length = 1.0f;
     }
 
-    vx = dx / length * speed;
-    vy = dy / length * speed;
+    velocityX = dx / length * speed;
+    velocityY = dy / length * speed;
 
     isActive = true;
 }

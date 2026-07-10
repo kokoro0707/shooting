@@ -35,11 +35,17 @@ private:
 private:
 	void UseSpecialAttack();
 
-	int specialEfectTimer;
+	int specialEffectTimer;
 	bool oldZKey;
 
-	EnemyBullet enemyBullet;
+	static const int MAX_ENEMY_BULLETS = 10;
+	EnemyBullet enemyBullets[MAX_ENEMY_BULLETS];
 	int enemyShotTimer;
+
+private:
+	int bulletSheetHandle;
+	int playerBulletHandle;
+	int enemyBulletHandle;
 };
 
 
