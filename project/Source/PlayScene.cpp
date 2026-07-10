@@ -3,36 +3,71 @@
 #include "DxLib.h"
 #include "../Library/SceneManager.h"
 
-
 PlayScene::PlayScene()
 {
-    // 各オブジェクトの初期化
     player.Initialize();
-    bulletSheetHandle = LoadGraph("data/image/stg07101.png");
-    playerBulletHandle = DerivationGraph(352, 46, 40, 52, bulletSheetHandle);
-    enemyBulletHandle = DerivationGraph(112, 46, 40, 52, bulletSheetHandle);
+
+    bulletSheetHandle =
+        LoadGraph("data/image/stg07101.png");
+
+    playerBulletHandle =
+        DerivationGraph(
+            352,
+            46,
+            40,
+            52,
+            bulletSheetHandle
+        );
+
+    enemyBulletHandle =
+        DerivationGraph(
+            112,
+            46,
+            40,
+            52,
+            bulletSheetHandle
+        );
+
     bullet.Initialize(playerBulletHandle);
     enemy.Initialize();
     energysystem.Initialize();
 
-    // 敵弾をすべて初期化
+    // ビームを初期化
+    beamEfect.Initialize();
+
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {
         enemyBullets[i].Initialize(enemyBulletHandle);
     }
 
     score = 0;
-
     enemyShotTimer = 0;
-
-    specialEffectTimer = 0;
     oldZKey = false;
 }
 
 
 PlayScene::~PlayScene()
 {
+    if (playerBulletHandle != -1)
+    {
+        DeleteGraph(playerBulletHandle);
+        playerBulletHandle = -1;
+    }
+
+    if (enemyBulletHandle != -1)
+    {
+        DeleteGraph(enemyBulletHandle);
+        enemyBulletHandle = -1;
+    }
+
+    if (bulletSheetHandle != -1)
+    {
+        DeleteGraph(bulletSheetHandle);
+        bulletSheetHandle = -1;
+    }
 }
+
+
 
 
 void PlayScene::Update()
@@ -89,12 +124,7 @@ void PlayScene::Update()
     // 大技処理
     UseSpecialAttack();
 
-    // 大技エフェクトの時間を減らす
-    if (specialEffectTimer > 0)
-    {
-        specialEffectTimer--;
-    }
-
+    beamEfect.Update();
     // 各種当たり判定
     CheckCollision();
 
@@ -149,28 +179,7 @@ void PlayScene::Draw()
     }
 
     // 大技エフェクト
-    if (specialEffectTimer > 0)
-    {
-        // プレイヤーから画面上部へレーザーを表示
-        DrawBox(
-            player.GetX() - 25,
-            0,
-            player.GetX() + 25,
-            player.GetY(),
-            GetColor(0, 220, 255),
-            TRUE
-        );
-
-        // 外側の白い光
-        DrawBox(
-            player.GetX() - 10,
-            0,
-            player.GetX() + 10,
-            player.GetY(),
-            GetColor(255, 255, 255),
-            TRUE
-        );
-    }
+    beamEfect.Draw();
 
     // 操作説明
     DrawString(20,660,"Move : WASD / Arrow", GetColor(255, 255, 255));
@@ -274,34 +283,40 @@ void PlayScene::CheckCollision()
 
 void PlayScene::UseSpecialAttack()
 {
-    bool currentZKey =
+   const bool currentZKey =
         CheckHitKey(KEY_INPUT_Z) != 0;
 
     // Zキーを押した瞬間だけ処理する
-    if (currentZKey && !oldZKey)
-    {
-        // 耐久値を20消費できる場合
-        if (energysystem.UseEnergy(20))
-        {
-            specialEffectTimer = 15;
+   if (currentZKey && !oldZKey)
+   {
+       //発動中は再使用しない
+       if (!beamEfect.IsActive())
+       {
 
-            // 敵を倒す
-            if (enemy.IsActive())
-            {
-                enemy.Damage(999);
 
-                score += 300;
+           // 耐久値を20消費できる場合
+           if (energysystem.UseEnergy(20))
+           {
+               beamEfect.Start(player.GetX(), player.GetY());
 
-                enemy.Respawn();
-            }
+               // 敵を倒す
+               if (enemy.IsActive())
+               {
+                   enemy.Damage(999);
 
-            // 画面上の敵弾をすべて消す
-            for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
-            {
-                enemyBullets[i].Deactivate();
-            }
-        }
-    }
+                   score += 300;
+
+                   enemy.Respawn();
+               }
+
+               // 画面上の敵弾をすべて消す
+               for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
+               {
+                   enemyBullets[i].Deactivate();
+               }
+           }
+       }
+   }
 
     oldZKey = currentZKey;
 }

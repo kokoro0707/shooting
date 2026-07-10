@@ -5,6 +5,7 @@
 #include "../Source/Enemy.h"
 #include "../Source/EnergySystem.h"
 #include "../Source/EnemyBullet.h"
+#include "BeamEfect.h"
 
 class PlayScene : public SceneBase
 {
@@ -35,7 +36,6 @@ private:
 private:
 	void UseSpecialAttack();
 
-	int specialEffectTimer;
 	bool oldZKey;
 
 	static const int MAX_ENEMY_BULLETS = 10;
@@ -46,6 +46,7 @@ private:
 	int bulletSheetHandle;
 	int playerBulletHandle;
 	int enemyBulletHandle;
+	 BeamEfect beamEfect;
 };
 
 

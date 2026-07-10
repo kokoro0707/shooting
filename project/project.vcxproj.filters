@@ -55,6 +55,7 @@
     <ClCompile Include="Source\Enemy.cpp" />
     <ClCompile Include="Source\EnergySystem.cpp" />
     <ClCompile Include="Source\EnemyBullet.cpp" />
+    <ClCompile Include="Source\BeamEfect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -124,6 +125,7 @@
     <ClInclude Include="Source\Enemy.h" />
     <ClInclude Include="Source\EnergySystem.h" />
     <ClInclude Include="Source\EnemyBullet.h" />
+    <ClInclude Include="Source\BeamEfect.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library">
