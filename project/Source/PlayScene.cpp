@@ -193,43 +193,83 @@ void PlayScene::Draw()
 void PlayScene::CheckCollision()
 {
     //========================================
-    // ƒvƒŒƒCƒ„[’e‚Æ“G‚Ì“–‚½‚è”»’è
+    // ƒr[ƒ€‚Æ“G
     //========================================
-
-    if (enemy.IsActive() && bullet.IsActive())
+    if (beamEfect.IsActive() && enemy.IsActive())
     {
-        int dx = enemy.GetX() - bullet.GetX();
-        int dy = enemy.GetY() - bullet.GetY();
+        const int beamX = beamEfect.GetX();
+        const int beamHalfWidth = 40;
 
-        int distanceSquared = dx * dx + dy * dy;
+        const int beamLeft = beamX - beamHalfWidth;
+        const int beamRight = beamX + beamHalfWidth;
+        const int beamTop = 0;
+        const int beamBottom = beamEfect.GetBottomY();
 
-        if (distanceSquared < 25 * 25)
+        const int enemyHalfWidth = 20;
+        const int enemyHalfHeight = 20;
+
+        const int enemyLeft =
+            enemy.GetX() - enemyHalfWidth;
+
+        const int enemyRight =
+            enemy.GetX() + enemyHalfWidth;
+
+        const int enemyTop =
+            enemy.GetY() - enemyHalfHeight;
+
+        const int enemyBottom =
+            enemy.GetY() + enemyHalfHeight;
+
+        const bool hitX =
+            beamLeft <= enemyRight &&
+            beamRight >= enemyLeft;
+
+        const bool hitY =
+            beamTop <= enemyBottom &&
+            beamBottom >= enemyTop;
+
+        if (hitX && hitY)
         {
-            // ƒvƒŒƒCƒ„[’e‚ğÁ‚·
-            bullet.Deactivate();
+            enemy.Damage(999);
 
-            // “G‚É1ƒ_ƒ[ƒW
-            enemy.Damage(1);
-        }
-
-        // “G‚ğ“|‚µ‚½ê‡
-        if (enemy.IsDead())
-        {
-            score += 100;
-
-            // “GŒ‚”j‚Å‘Ï‹v’l‚ğ5‰ñ•œ
+            score += 300;
             energysystem.Recover(5);
 
-            // “G‚ğÄoŒ»‚³‚¹‚é
             enemy.Respawn();
         }
     }
 
+    //========================================
+    // ƒvƒŒƒCƒ„[’e‚Æ“G
+    //========================================
+    if (enemy.IsActive() && bullet.IsActive())
+    {
+        const int dx =
+            enemy.GetX() - bullet.GetX();
+
+        const int dy =
+            enemy.GetY() - bullet.GetY();
+
+        const int distanceSquared =
+            dx * dx + dy * dy;
+
+        if (distanceSquared < 25 * 25)
+        {
+            bullet.Deactivate();
+            enemy.Damage(1);
+
+            if (enemy.IsDead())
+            {
+                score += 100;
+                energysystem.Recover(5);
+                enemy.Respawn();
+            }
+        }
+    }
 
     //========================================
-    // “G’e‚ÆƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
+    // “G’e‚ÆƒvƒŒƒCƒ„[
     //========================================
-
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
     {
         if (!enemyBullets[i].IsActive())
@@ -237,44 +277,39 @@ void PlayScene::CheckCollision()
             continue;
         }
 
-        int dx =
-            player.GetX() -
-            enemyBullets[i].GetX();
+        const int dx =
+            player.GetX() - enemyBullets[i].GetX();
 
-        int dy =
-            player.GetY() -
-            enemyBullets[i].GetY();
+        const int dy =
+            player.GetY() - enemyBullets[i].GetY();
 
-        int distanceSquared = dx * dx + dy * dy;
+        const int distanceSquared =
+            dx * dx + dy * dy;
 
         if (distanceSquared < 25 * 25)
         {
-            // “G’e‚ğÁ‚·
             enemyBullets[i].Deactivate();
-
-            // ‘Ï‹v’l‚ğ10Œ¸‚ç‚·
             energysystem.Damage(10);
         }
     }
 
-
     //========================================
-    // “G–{‘Ì‚ÆƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
+    // “G–{‘Ì‚ÆƒvƒŒƒCƒ„[
     //========================================
-
     if (enemy.IsActive())
     {
-        int dx = player.GetX() - enemy.GetX();
-        int dy = player.GetY() - enemy.GetY();
+        const int dx =
+            player.GetX() - enemy.GetX();
 
-        int distanceSquared = dx * dx + dy * dy;
+        const int dy =
+            player.GetY() - enemy.GetY();
+
+        const int distanceSquared =
+            dx * dx + dy * dy;
 
         if (distanceSquared < 35 * 35)
         {
-            // ÚG‚µ‚½“G‚ğÄoŒ»‚³‚¹‚é
             enemy.Respawn();
-
-            // ƒvƒŒƒCƒ„[‚Ì‘Ï‹v’l‚ğ20Œ¸‚ç‚·
             energysystem.Damage(20);
         }
     }
@@ -283,40 +318,30 @@ void PlayScene::CheckCollision()
 
 void PlayScene::UseSpecialAttack()
 {
-   const bool currentZKey =
+    const bool currentZKey =
         CheckHitKey(KEY_INPUT_Z) != 0;
 
-    // ZƒL[‚ğ‰Ÿ‚µ‚½uŠÔ‚¾‚¯ˆ—‚·‚é
-   if (currentZKey && !oldZKey)
-   {
-       //”­“®’†‚ÍÄg—p‚µ‚È‚¢
-       if (!beamEfect.IsActive())
-       {
+    if (currentZKey && !oldZKey)
+    {
+        if (!beamEfect.IsActive())
+        {
+            if (energysystem.UseEnergy(20))
+            {
+                beamEfect.Start(
+                    player.GetX(),
+                    player.GetY()
+                );
 
-
-           // ‘Ï‹v’l‚ğ20Á”ï‚Å‚«‚éê‡
-           if (energysystem.UseEnergy(20))
-           {
-               beamEfect.Start(player.GetX(), player.GetY());
-
-               // “G‚ğ“|‚·
-               if (enemy.IsActive())
-               {
-                   enemy.Damage(999);
-
-                   score += 300;
-
-                   enemy.Respawn();
-               }
-
-               // ‰æ–Êã‚Ì“G’e‚ğ‚·‚×‚ÄÁ‚·
-               for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
-               {
-                   enemyBullets[i].Deactivate();
-               }
-           }
-       }
-   }
+                // “G’e‚ğ‚·‚×‚ÄÁ‚·
+                for (int i = 0;
+                    i < MAX_ENEMY_BULLETS;
+                    i++)
+                {
+                    enemyBullets[i].Deactivate();
+                }
+            }
+        }
+    }
 
     oldZKey = currentZKey;
 }

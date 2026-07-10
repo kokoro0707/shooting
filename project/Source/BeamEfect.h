@@ -14,6 +14,10 @@ public:
 
     void Update();
     void Draw();
+    int GetX()const;
+    int GetY()const;
+    int GetBottomY()const;
+    int GetWidth()const;
 
     bool IsActive() const
     {
@@ -32,5 +36,8 @@ private:
     int animationTimer;
     int currentFrame;
 
+    int holdTimer;
+
     bool isActive;
+    bool isShrink;
 };
