@@ -29,7 +29,10 @@ PlayScene::PlayScene()
         );
 
     bullet.Initialize(playerBulletHandle);
-    enemy.Initialize();
+    for (int i = 0;i < ENEMY_MAX;i++)
+    {
+        enemies[i].Initialize();
+    }
     energysystem.Initialize();
 
     // ÉrÅ[ÉÄÇèâä˙âª
@@ -79,10 +82,13 @@ void PlayScene::Update()
     bullet.Update();
 
     // ìGçXêV
-    enemy.Update(
-        player.GetX(),
-        player.GetY()
-    );
+    for (int i = 0;i < ENEMY_MAX;i++)
+    {
+        enemies[i].Update(
+            player.GetX(),
+            player.GetY()
+        );
+    }
 
     // ëœãvílçXêV
     energysystem.Update();
@@ -99,24 +105,26 @@ void PlayScene::Update()
     // 90ÉtÉåÅ[ÉÄÇ≤Ç∆Ç…éÀåÇ
     if (enemyShotTimer >= 90)
     {
-        if (enemy.IsActive())
+        for (int e = 0; e < ENEMY_MAX; e++)
         {
-            // égópÇ≥ÇÍÇƒÇ¢Ç»Ç¢ìGíeÇíTÇ∑
+            if (!enemies[e].IsActive())
+                continue;
+
             for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
             {
                 if (!enemyBullets[i].IsActive())
                 {
                     enemyBullets[i].Fire(
-                        enemy.GetX(),
-                        enemy.GetY(),
+                        enemies[e].GetX(),
+                        enemies[e].GetY(),
                         player.GetX(),
                         player.GetY()
                     );
-
                     break;
                 }
             }
         }
+
 
         enemyShotTimer = 0;
     }
@@ -170,7 +178,10 @@ void PlayScene::Draw()
     bullet.Draw();
 
     // ìGï\é¶
-    enemy.Draw();
+    for (int i = 0;i < ENEMY_MAX;i++)
+    {
+        enemies[i].Draw();
+    }
 
     // ìGíeÇÇ∑Ç◊Çƒï\é¶
     for (int i = 0; i < MAX_ENEMY_BULLETS; i++)
@@ -195,74 +206,88 @@ void PlayScene::CheckCollision()
     //========================================
     // ÉrÅ[ÉÄÇ∆ìG
     //========================================
-    if (beamEfect.IsActive() && enemy.IsActive())
+    if (beamEfect.IsActive())
     {
         const int beamX = beamEfect.GetX();
-        const int beamHalfWidth = 40;
+        const int beamHalfWidth = beamEfect.GetWidth() / 2;
 
         const int beamLeft = beamX - beamHalfWidth;
         const int beamRight = beamX + beamHalfWidth;
         const int beamTop = 0;
         const int beamBottom = beamEfect.GetBottomY();
 
-        const int enemyHalfWidth = 20;
-        const int enemyHalfHeight = 20;
-
-        const int enemyLeft =
-            enemy.GetX() - enemyHalfWidth;
-
-        const int enemyRight =
-            enemy.GetX() + enemyHalfWidth;
-
-        const int enemyTop =
-            enemy.GetY() - enemyHalfHeight;
-
-        const int enemyBottom =
-            enemy.GetY() + enemyHalfHeight;
-
-        const bool hitX =
-            beamLeft <= enemyRight &&
-            beamRight >= enemyLeft;
-
-        const bool hitY =
-            beamTop <= enemyBottom &&
-            beamBottom >= enemyTop;
-
-        if (hitX && hitY)
+        for (int i = 0; i < ENEMY_MAX; i++)
         {
-            enemy.Damage(999);
+            if (!enemies[i].IsActive())
+            {
+                continue;
+            }
 
-            score += 300;
-            energysystem.Recover(5);
+            const int enemyHalfWidth = 20;
+            const int enemyHalfHeight = 20;
 
-            enemy.Respawn();
+            const int enemyLeft = enemies[i].GetX() - enemyHalfWidth;
+            const int enemyRight = enemies[i].GetX() + enemyHalfWidth;
+            const int enemyTop = enemies[i].GetY() - enemyHalfHeight;
+            const int enemyBottom = enemies[i].GetY() + enemyHalfHeight;
+
+            const bool hitX =
+                beamLeft <= enemyRight &&
+                beamRight >= enemyLeft;
+
+            const bool hitY =
+                beamTop <= enemyBottom &&
+                beamBottom >= enemyTop;
+
+            if (hitX && hitY)
+            {
+                enemies[i].Damage(999);
+
+                score += 300;
+                energysystem.Recover(5);
+
+                enemies[i].Respawn();
+            }
         }
     }
 
     //========================================
     // ÉvÉåÉCÉÑÅ[íeÇ∆ìG
     //========================================
-    if (enemy.IsActive() && bullet.IsActive())
+    if (bullet.IsActive())
     {
-        const int dx =
-            enemy.GetX() - bullet.GetX();
-
-        const int dy =
-            enemy.GetY() - bullet.GetY();
-
-        const int distanceSquared =
-            dx * dx + dy * dy;
-
-        if (distanceSquared < 25 * 25)
+        for (int i = 0; i < ENEMY_MAX; i++)
         {
-            bullet.Deactivate();
-            enemy.Damage(1);
-
-            if (enemy.IsDead())
+            if (!enemies[i].IsActive())
             {
-                score += 100;
-                energysystem.Recover(5);
-                enemy.Respawn();
+                continue;
+            }
+
+            const int dx =
+                enemies[i].GetX() - bullet.GetX();
+
+            const int dy =
+                enemies[i].GetY() - bullet.GetY();
+
+            const int distanceSquared =
+                dx * dx + dy * dy;
+
+            if (distanceSquared < 25 * 25)
+            {
+                bullet.Deactivate();
+
+                enemies[i].Damage(1);
+
+                if (enemies[i].IsDead())
+                {
+                    score += 100;
+
+                    energysystem.Recover(5);
+
+                    enemies[i].Respawn();
+                }
+
+                break;
             }
         }
     }
@@ -289,6 +314,7 @@ void PlayScene::CheckCollision()
         if (distanceSquared < 25 * 25)
         {
             enemyBullets[i].Deactivate();
+
             energysystem.Damage(10);
         }
     }
@@ -296,24 +322,31 @@ void PlayScene::CheckCollision()
     //========================================
     // ìGñ{ëÃÇ∆ÉvÉåÉCÉÑÅ[
     //========================================
-    if (enemy.IsActive())
+    for (int i = 0; i < ENEMY_MAX; i++)
     {
+        if (!enemies[i].IsActive())
+        {
+            continue;
+        }
+
         const int dx =
-            player.GetX() - enemy.GetX();
+            player.GetX() - enemies[i].GetX();
 
         const int dy =
-            player.GetY() - enemy.GetY();
+            player.GetY() - enemies[i].GetY();
 
         const int distanceSquared =
             dx * dx + dy * dy;
 
         if (distanceSquared < 35 * 35)
         {
-            enemy.Respawn();
+            enemies[i].Respawn();
+
             energysystem.Damage(20);
         }
     }
 }
+
 
 
 void PlayScene::UseSpecialAttack()

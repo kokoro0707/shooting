@@ -26,9 +26,11 @@ private:
 
 
 private:
+	static const int ENEMY_MAX = 5;
+	static const int MAX_ENEMY_BULLETS = 10;
 	Player player;
 	Bullet bullet;
-	Enemy enemy;
+	Enemy enemies[ENEMY_MAX];
 	EnergySystem energysystem;
 
 	int score;
@@ -38,7 +40,6 @@ private:
 
 	bool oldZKey;
 
-	static const int MAX_ENEMY_BULLETS = 10;
 	EnemyBullet enemyBullets[MAX_ENEMY_BULLETS];
 	int enemyShotTimer;
 
